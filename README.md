@@ -1,7 +1,6 @@
 # datasette-syntaqlite
 
 [![PyPI](https://img.shields.io/pypi/v/datasette-syntaqlite.svg)](https://pypi.org/project/datasette-syntaqlite/)
-[![Changelog](https://img.shields.io/github/v/release/theophilec/datasette-syntaqlite?include_prereleases&label=changelog)](https://github.com/theophilec/datasette-syntaqlite/releases)
 [![Tests](https://github.com/theophilec/datasette-syntaqlite/actions/workflows/test.yml/badge.svg)](https://github.com/theophilec/datasette-syntaqlite/actions/workflows/test.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/theophilec/datasette-syntaqlite/blob/main/LICENSE)
 
