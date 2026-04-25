@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 dependencies = [
     "datasette",
     "pydantic>=2.12.5",
-    "syntaqlite>=0.2.10",
+    "syntaqlite>=0.5.0",
 ]
 
 [dependency-groups]

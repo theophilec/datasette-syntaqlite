@@ -7,6 +7,9 @@ from datasette import Response, hookimpl
 from markupsafe import escape
 from pydantic import BaseModel
 
+_syntaqlite_instance = _syntaqlite.Syntaqlite()
+
+
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 
 
@@ -85,7 +88,8 @@ async def _lint_view(request, datasette):
         )
 
     try:
-        result = _syntaqlite.validate(sql, tables=tables, views=views)
+        schema = _syntaqlite.Schema(tables=tables, views=views)
+        result = _syntaqlite_instance.analyze(sql, schema)
         diagnostics = [
             SyntaqliteDiagnostics(
                 severity=d.severity,
