@@ -2,12 +2,13 @@ import json
 import mimetypes
 import os
 
-import syntaqlite as _syntaqlite
+import syntaqlite as syntaqlite
 from datasette import Response, hookimpl
 from markupsafe import escape
 from pydantic import BaseModel
+from syntaqlite import Analysis
 
-_syntaqlite_instance = _syntaqlite.Syntaqlite()
+syntaqlite_instance = syntaqlite.Syntaqlite()
 
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
@@ -43,7 +44,7 @@ class LintRequest(BaseModel):
     database: str | None = None
 
 
-async def _lint_view(request, datasette):
+async def lint_view(request, datasette):
     """POST /-/syntaqlite-lint — validate SQL and return diagnostics."""
 
     try:
@@ -71,7 +72,7 @@ async def _lint_view(request, datasette):
                 col_names = [col.name for col in cols]
             except Exception:
                 col_names = None  # syntaqlite accepts None → unknown columns
-            tables.append(_syntaqlite.Table(table_name, col_names))
+            tables.append(syntaqlite.Table(table_name, col_names))
 
         views = []
         for view_name in view_names:
@@ -80,7 +81,7 @@ async def _lint_view(request, datasette):
                 col_names = [col.name for col in cols]
             except Exception:
                 col_names = None
-            views.append(_syntaqlite.View(view_name, col_names))
+            views.append(syntaqlite.View(view_name, col_names))
 
     except Exception as exc:
         return Response.json(
@@ -88,24 +89,28 @@ async def _lint_view(request, datasette):
         )
 
     try:
-        schema = _syntaqlite.Schema(tables=tables, views=views)
-        result = _syntaqlite_instance.analyze(sql, schema)
-        diagnostics = [
-            SyntaqliteDiagnostics(
-                severity=d.severity,
-                message=d.message,
-                start_offset=d.start_offset,
-                end_offset=d.end_offset,
-            )
-            for d in result.diagnostics
-        ]
+        schema = syntaqlite.Schema(tables=tables, views=views)
+        result = syntaqlite_instance.analyze(sql, schema)
+        if isinstance(result, Analysis):
+            diagnostics = [
+                SyntaqliteDiagnostics(
+                    severity=d.severity,
+                    message=d.message,
+                    start_offset=d.start_offset,
+                    end_offset=d.end_offset,
+                )
+                for d in result.diagnostics
+            ]
+        else:
+            diagnostics = [
+                SyntaqliteDiagnostics(
+                    severity="fallback", message=result, start_offset=0, end_offset=1
+                )
+            ]
+
         return Response.json({"diagnostics": [d.model_dump() for d in diagnostics]})
     except Exception as exc:
         return Response.json({"error": f"Validation error: {exc}"}, status=500)
-
-
-async def lint_view(request, datasette):
-    return await _lint_view(request, datasette)
 
 
 @hookimpl
