@@ -2,8 +2,9 @@ import json
 
 import syntaqlite
 from datasette import Response
-from models import LintRequest, SyntaqliteDiagnostics
 from syntaqlite import Analysis
+
+from .models import LintRequest, SyntaqliteDiagnostics
 
 syntaqlite_instance = syntaqlite.Syntaqlite()
 
