@@ -1,6 +1,6 @@
 [project]
 name = "datasette-syntaqlite"
-version = "0.1"
+version = "0.2"
 description = "Lint Datasette queries with Syntaqlite"
 readme = "README.md"
 authors = [{name = "Théophile Cantelobre"}]
