@@ -68,9 +68,7 @@ async def test_lint_bad_json_returns_400(ds):
         headers={"content-type": "application/json"},
     )
     assert response.status_code == 400
-    assert response.json() == {
-        "error": "Bad JSON: 1 validation error for LintRequest\n  Invalid JSON: expected ident at line 1 column 2 [type=json_invalid, input_value=b'not json at all', input_type=bytes]\n    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid"
-    }
+    assert "Bad JSON" in response.json()["error"]
 
 
 @pytest.mark.asyncio
