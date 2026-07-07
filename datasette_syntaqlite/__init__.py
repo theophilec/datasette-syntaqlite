@@ -1,4 +1,3 @@
-import syntaqlite as syntaqlite
 from datasette import hookimpl
 from markupsafe import escape
 
